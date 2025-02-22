@@ -18,8 +18,15 @@ class MyApp extends StatelessWidget {
 }
 
 /// 홈 페이지
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<String> bucketList = ['여행가기']; // 전체 버킷리스트 목록
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,35 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("버킷 리스트"),
       ),
-      body: Center(child: Text("버킷 리스트를 작성해 주세요.")),
+      body: bucketList.isEmpty
+          ? Center(child: Text("버킷 리스트를 작성해 주세요."))
+          : ListView.builder(
+              itemCount: bucketList.length, // bucketList 개수 만큼 보여주기
+              itemBuilder: (context, index) {
+                String bucket = bucketList[index]; // index에 해당하는 bucket 가져오기
+                return ListTile(
+                  // 버킷 리스트 할 일
+                  title: Text(
+                    bucket,
+                    style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                  // 삭제 아이콘 버튼
+                  trailing: IconButton(
+                    icon: Icon(CupertinoIcons.delete),
+                    onPressed: () {
+                      // 삭제 버튼 클릭시
+                      print('$bucket : 삭제하기');
+                    },
+                  ),
+                  onTap: () {
+                    // 아이템 클릭시
+                    print('$bucket : 클릭 됨');
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -43,8 +78,19 @@ class HomePage extends StatelessWidget {
 }
 
 /// 버킷 생성 페이지
-class CreatePage extends StatelessWidget {
+class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
+
+  @override
+  State<CreatePage> createState() => _CreatePageState();
+}
+
+class _CreatePageState extends State<CreatePage> {
+  // TextField의 값을 가져올 때 사용합니다.
+  TextEditingController textController = TextEditingController();
+
+  // 에러메세지
+  String? error;
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +111,12 @@ class CreatePage extends StatelessWidget {
           children: [
             // 텍스트 입력창
             TextField(
+              controller: textController,
               autofocus: true,
               decoration: InputDecoration(
                 hintText: "하고 싶은 일을 입력하세요",
+                // 에러 표기하는 속성, ""넣어도 빨간색 표시되며 아예 안쓰려면 null
+                errorText: error,
               ),
             ),
             SizedBox(height: 32),
@@ -84,6 +133,16 @@ class CreatePage extends StatelessWidget {
                 ),
                 onPressed: () {
                   // 추가하기 버튼 클릭시
+                  String job = textController.text;
+                  if (job.isEmpty) {
+                    setState(() {
+                      error = "내용을 입력해주세요.";
+                    });
+                  } else {
+                    setState(() {
+                      error = null;
+                    });
+                  }
                 },
               ),
             ),
