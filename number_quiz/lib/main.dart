@@ -18,8 +18,35 @@ class MyApp extends StatelessWidget {
 }
 
 /// 홈 페이지
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String quiz = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // // 앱 실행시 퀴즈 가져오기, then : 비동기 처리 완료 후 실행 (await 대신 사용)
+    // getNumberTrivia().then((value) {
+    //   setState(() {
+    //     quiz = value;
+    //   });
+    // });
+
+    getQuiz();
+  }
+
+  void getQuiz() async {
+    String trivia = await getNumberTrivia();
+    setState(() {
+      quiz = trivia;
+    });
+  }
 
   /// Numbers API 호출하기
   Future<String> getNumberTrivia() async {
@@ -43,7 +70,7 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  "퀴즈",
+                  quiz,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
@@ -66,9 +93,21 @@ class HomePage extends StatelessWidget {
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.white),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   // New Quiz 클릭시 퀴즈 가져오기
-                  getNumberTrivia();
+
+                  // 방법 1
+                  // quiz = await getNumberTrivia();
+                  // setState(() {});
+
+                  // // 방법 2
+                  // String trivia = await getNumberTrivia();
+                  // setState(() {
+                  //   quiz = trivia;
+                  // });
+
+                  // 방법 3
+                  getQuiz();
                 },
               ),
             ),
