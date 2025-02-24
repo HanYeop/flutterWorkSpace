@@ -60,58 +60,62 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        color: Colors.pinkAccent,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // quiz
-            Expanded(
-              child: Center(
-                child: Text(
-                  quiz,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    color: Colors.white,
+      // 상단 상태바까지 포함하는 배경색
+      backgroundColor: Colors.pinkAccent,
+      // SafeArea : 상단 상태바, 하단 네비게이션 바를 고려한 영역
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // quiz
+              Expanded(
+                child: Center(
+                  child: Text(
+                    quiz,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-            // New Quiz 버튼
-            SizedBox(
-              height: 42,
-              child: ElevatedButton(
-                child: Text(
-                  "New Quiz",
-                  style: TextStyle(
-                    color: Colors.pinkAccent,
-                    fontSize: 24,
+              // New Quiz 버튼
+              SizedBox(
+                height: 42,
+                child: ElevatedButton(
+                  child: Text(
+                    "New Quiz",
+                    style: TextStyle(
+                      color: Colors.pinkAccent,
+                      fontSize: 24,
+                    ),
                   ),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.white),
+                  ),
+                  onPressed: () async {
+                    // New Quiz 클릭시 퀴즈 가져오기
+
+                    // 방법 1
+                    // quiz = await getNumberTrivia();
+                    // setState(() {});
+
+                    // // 방법 2
+                    // String trivia = await getNumberTrivia();
+                    // setState(() {
+                    //   quiz = trivia;
+                    // });
+
+                    // 방법 3
+                    getQuiz();
+                  },
                 ),
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(Colors.white),
-                ),
-                onPressed: () async {
-                  // New Quiz 클릭시 퀴즈 가져오기
-
-                  // 방법 1
-                  // quiz = await getNumberTrivia();
-                  // setState(() {});
-
-                  // // 방법 2
-                  // String trivia = await getNumberTrivia();
-                  // setState(() {
-                  //   quiz = trivia;
-                  // });
-
-                  // 방법 3
-                  getQuiz();
-                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
