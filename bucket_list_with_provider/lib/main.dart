@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/* 
+1. `Consumer<클래스명>` : 클래스 정보 갱신시 함께 새로고침 할 때 사용
+2. `context.read<클래스명>` : 1회성으로 클래스 접근할 때 사용
+*/
 void main() {
   runApp(
     MultiProvider(
@@ -70,11 +74,12 @@ class HomePage extends StatelessWidget {
                       trailing: IconButton(
                         icon: Icon(CupertinoIcons.delete),
                         onPressed: () {
-                          // 삭제 버튼 클릭시
+                          bucketService.deleteBucket(index);
                         },
                       ),
                       onTap: () {
-                        // 아이템 클릭시
+                        bucket.isDone = !bucket.isDone;
+                        bucketService.updateBucket(bucket, index);
                       },
                     );
                   },
@@ -157,7 +162,10 @@ class _CreatePageState extends State<CreatePage> {
                     });
                   } else {
                     setState(() {
-                      error = null; // 내용이 있는 경우 에러 메세지 숨기기
+                      // BucketService 가져오기
+                      BucketService bucketService = context.read<
+                          BucketService>(); // read = context의 BucketService를 가져옵니다. Consumer를 사용하지 않아도 됩니다. (notifyListeners 동기화는 안됨.)
+                      bucketService.createBucket(job);
                     });
                     Navigator.pop(context); // 화면을 종료합니다.
                   }
