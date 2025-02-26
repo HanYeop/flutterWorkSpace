@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,37 @@ class MyApp extends StatelessWidget {
 class CatService extends ChangeNotifier {
   // 고양이 사진 담을 변수
   List<String> catImages = [];
+
+  // 좋아요 사진 담을 변수
+  List<String> favoriteImages = [];
+
+  CatService() {
+    getRandomCatImages();
+  }
+
+  // 랜덤 고양이 사진 API 호출
+  void getRandomCatImages() async {
+    var result = await Dio().get(
+      "https://api.thecatapi.com/v1/images/search?limit=10&mime_types=jpg",
+    );
+    print(result.data);
+    for (var i = 0; i < result.data.length; i++) {
+      var map = result.data[i];
+      print(map);
+      print(map["url"]);
+      catImages.add(map["url"]);
+    }
+    notifyListeners();
+  }
+
+  void toggleFavorite(String url) {
+    if (favoriteImages.contains(url)) {
+      favoriteImages.remove(url);
+    } else {
+      favoriteImages.add(url);
+    }
+    notifyListeners();
+  }
 }
 
 /// 홈 페이지
@@ -62,10 +94,19 @@ class HomePage extends StatelessWidget {
             padding: EdgeInsets.all(8),
             crossAxisCount: 2,
             children: List.generate(
-              10,
+              catService.catImages.length,
               (index) {
-                return Center(
-                  child: Text("$index", style: TextStyle(fontSize: 24)),
+                // Inkwel로 감싸서 클릭 이벤트 추가
+                return InkWell(
+                  onTap: () {
+                    // 좋아요 추가
+                    catService.toggleFavorite(catService.catImages[index]);
+                  },
+                  // network 이미지
+                  child: Image.network(
+                    catService.catImages[index],
+                    fit: BoxFit.cover,
+                  ),
                 );
               },
             ),
