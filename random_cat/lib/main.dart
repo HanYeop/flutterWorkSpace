@@ -88,6 +88,7 @@ class HomePage extends StatelessWidget {
             ],
           ),
           // 고양이 사진 목록
+          // expand-region 사용해서 GridView 통채로 복사 (컨트롤 w 두번)
           body: GridView.count(
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
@@ -147,6 +148,47 @@ class FavoritePage extends StatelessWidget {
           appBar: AppBar(
             title: Text("좋아요"),
             backgroundColor: Colors.amber,
+          ),
+          body: GridView.count(
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            padding: EdgeInsets.all(8),
+            crossAxisCount: 2,
+            children: List.generate(
+              catService.favoriteImages.length,
+              (index) {
+                // Inkwel로 감싸서 클릭 이벤트 추가
+                return InkWell(
+                  onTap: () {
+                    // 좋아요 추가
+                    catService.toggleFavorite(catService.favoriteImages[index]);
+                  },
+                  // network 이미지
+                  child: Stack(
+                    children: [
+                      // Positioned.fill 사용하면 fit: BoxFit.cover 사용 가능
+                      Positioned.fill(
+                        child: Image.network(
+                          catService.favoriteImages[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        right: 8,
+                        bottom: 8,
+                        child: Icon(
+                          Icons.favorite,
+                          color: catService.favoriteImages
+                                  .contains(catService.favoriteImages[index])
+                              ? Colors.amber
+                              : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
