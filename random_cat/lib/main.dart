@@ -103,9 +103,27 @@ class HomePage extends StatelessWidget {
                     catService.toggleFavorite(catService.catImages[index]);
                   },
                   // network 이미지
-                  child: Image.network(
-                    catService.catImages[index],
-                    fit: BoxFit.cover,
+                  child: Stack(
+                    children: [
+                      // Positioned.fill 사용하면 fit: BoxFit.cover 사용 가능
+                      Positioned.fill(
+                        child: Image.network(
+                          catService.catImages[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        right: 8,
+                        bottom: 8,
+                        child: Icon(
+                          Icons.favorite,
+                          color: catService.favoriteImages
+                                  .contains(catService.catImages[index])
+                              ? Colors.amber
+                              : Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
