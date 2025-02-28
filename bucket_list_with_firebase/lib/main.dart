@@ -94,7 +94,22 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text("회원가입", style: TextStyle(fontSize: 21)),
                   onPressed: () {
                     // 회원가입
-                    print("sign up");
+                    authService.signUp(
+                      email: emailController.text,
+                      password: passwordController.text,
+                      onSuccess: () {
+                        // 회원가입 성공
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("회원가입 성공"),
+                        ));
+                      },
+                      onError: (err) {
+                        // 에러 발생
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(err),
+                        ));
+                      },
+                    );
                   },
                 ),
               ],
