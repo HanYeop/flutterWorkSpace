@@ -1,11 +1,20 @@
+import 'package:bucket_list_with_firebase/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // main 함수에서 async 사용하기 위함
   await Firebase.initializeApp(); // firebase 앱 시작
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -34,61 +43,65 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("로그인")),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            /// 현재 유저 로그인 상태
-            Center(
-              child: Text(
-                "로그인해 주세요 🙂",
-                style: TextStyle(
-                  fontSize: 24,
+    return Consumer<AuthService>(
+      builder: (context, authService, child) {
+        return Scaffold(
+          appBar: AppBar(title: Text("로그인")),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                /// 현재 유저 로그인 상태
+                Center(
+                  child: Text(
+                    "로그인해 주세요 🙂",
+                    style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 32),
+                SizedBox(height: 32),
 
-            /// 이메일
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(hintText: "이메일"),
-            ),
+                /// 이메일
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(hintText: "이메일"),
+                ),
 
-            /// 비밀번호
-            TextField(
-              controller: passwordController,
-              obscureText: false, // 비밀번호 안보이게
-              decoration: InputDecoration(hintText: "비밀번호"),
-            ),
-            SizedBox(height: 32),
+                /// 비밀번호
+                TextField(
+                  controller: passwordController,
+                  obscureText: false, // 비밀번호 안보이게
+                  decoration: InputDecoration(hintText: "비밀번호"),
+                ),
+                SizedBox(height: 32),
 
-            /// 로그인 버튼
-            ElevatedButton(
-              child: Text("로그인", style: TextStyle(fontSize: 21)),
-              onPressed: () {
-                // 로그인 성공시 HomePage로 이동
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomePage()),
-                );
-              },
-            ),
+                /// 로그인 버튼
+                ElevatedButton(
+                  child: Text("로그인", style: TextStyle(fontSize: 21)),
+                  onPressed: () {
+                    // 로그인 성공시 HomePage로 이동
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => HomePage()),
+                    );
+                  },
+                ),
 
-            /// 회원가입 버튼
-            ElevatedButton(
-              child: Text("회원가입", style: TextStyle(fontSize: 21)),
-              onPressed: () {
-                // 회원가입
-                print("sign up");
-              },
+                /// 회원가입 버튼
+                ElevatedButton(
+                  child: Text("회원가입", style: TextStyle(fontSize: 21)),
+                  onPressed: () {
+                    // 회원가입
+                    print("sign up");
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
